@@ -1,6 +1,7 @@
 require 'open-uri'
 require 'nokogiri'
 require 'string-utility'
+require_relative 'exceptions'
 
 module GitHub
   module Calendar
@@ -10,10 +11,8 @@ module GitHub
     # Gets the total number of contributions for the past year.
     # @param user [String] The username to get this data for.
     # @return [Int] An integer value of their total contributions this year.
-    # @return [Nil] If the user cannot be found.
     def get_total_year(user)
       source = get_page_source(user)
-      return nil if source.nil?
       string = source.css('span.contrib-number')[0].text
       string.to_i_separated
     end
@@ -21,10 +20,8 @@ module GitHub
     # Gets the longest contribution streak (in days) that the user has had.
     # @param user [String] See #get_total_year
     # @return [Int] The user's longest contribution streak in days.
-    # @return [Nil] See #get_total_year
     def get_longest_streak(user)
       source = get_page_source(user)
-      return nil if source.nil?
       string = source.css('span.contrib-number')[1].text
       string.to_i_separated
     end
@@ -32,10 +29,8 @@ module GitHub
     # Gets the current contribution streak (in days) that the user is in.
     # @param user [String] See #get_total_year
     # @return [Int] The user's current contribution streak in days.
-    # @return [Nil] See #get_total_year
     def get_current_streak(user)
       source = get_page_source(user)
-      return nil if source.nil?
       string = source.css('span.contrib-number')[2].text
       string.to_i_separated
     end
@@ -44,10 +39,8 @@ module GitHub
     # @param user [String] See #get_total_year
     # @return [Hash] How many contributions they have done each week. Example:
     # { 0: 0, 1: 8, etc. }
-    # @return [Nil] See #get_total_year
     def get_weekly(user)
       weeks = get_calendar(user)
-      return nil if weeks.nil?
       ret = {}
       count = 0
       weeks[1..-1].each do |k|
@@ -66,10 +59,8 @@ module GitHub
     # @param user [String] See #get_total_year
     # @return [Hash] How many contributions they have performed each day. See
     # #get_weekly
-    # @return [Nil] See #get_total_year
     def get_daily(user)
       weeks = get_calendar(user)
-      return nil if weeks.nil?
       ret = {}
       count = 0
       weeks[1..-1].each do |k|
@@ -87,10 +78,8 @@ module GitHub
     # @return [Hash] How many contributions they have performed each month.
     # Months are listed as their string integers, e.g., 01 is January and
     # 12 is December.
-    # @return [Nil] See #get_total_year
     def get_monthly(user)
       weeks = get_calendar(user)
-      return nil if weeks.nil?
       ret = {
         '01' => 0,
         '02' => 0,
@@ -118,30 +107,24 @@ module GitHub
     # Gets the average weekly number of contributions by the user.
     # @param user [String] See #get_total_year
     # @return [Int] The average number of contributions.
-    # @return [Nil] See #get_total_year
     def get_average_week(user)
       weekly = get_weekly(user)
-      return nil if weekly.nil?
       get_average(weekly)
     end
 
     # Gets the average daily number of contributions by the user.
     # @param user [String] See #get_total_year
     # @return [Int] See #get_average_week
-    # @return [Nil] See #get_total_year
     def get_average_day(user)
       daily = get_daily(user)
-      return nil if daily.nil?
       get_average(daily)
     end
 
     # Gets the average monthly number of contributions by the user.
     # @param user [String] See #get_total_year
     # @return [Int] See #get_average_week
-    # @return [Nil] See #get_total_year
     def get_average_month(user)
       monthly = get_monthly(user)
-      return nil if monthly.nil?
       get_average(monthly)
     end
 
@@ -150,12 +133,12 @@ module GitHub
     # Gets the parsed HTML source for the user profile.
     # @param user [String] See #get_total_year
     # @return [Nokogiri::HTML::Document] The parsed HTML for the user page
-    # @return [Nil] If OpenURI throws an HTTPError.
+    # @raise [UserNotFoundException] If the user is not found.
     def get_page_source(user)
       begin
         Nokogiri::HTML(open("https://github.com/#{user}"), &:noblanks)
       rescue OpenURI::HTTPError
-        return nil
+        raise GitHub::Exceptions::UserNotFoundException.new(user)
       end
     end
 
@@ -167,7 +150,6 @@ module GitHub
     # @return [Nil] See #get_total_year
     def get_calendar(user)
       source = get_page_source(user)
-      return nil if source.nil?
       source.css('svg.js-calendar-graph-svg g')
     end
 
