@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name = 'github-calendar'
   s.version = '1.0.0'
-  s.require_ruby_version = '>= 2.2.3'
+  s.required_ruby_version = '>= 2.2.3'
   s.authors = ['Eli Foster']
   s.description = 'A library that allows for quick HTML parsing of GitHub ' \
                   'user profile contribution calendars. This project is ' \
@@ -9,6 +9,7 @@ Gem::Specification.new do |s|
   s.email = 'elifosterwy@gmail.com'
   s.files = [
     'lib/github/calendar.rb',
+    'lib/github/exceptions.rb',
     'CHANGELOG.md'
   ]
   s.homepage = 'https://github.com/ghuls-apps/github-calendar-api'
