@@ -12,7 +12,7 @@ $ gem install github-calendar
 ### Bundler
 Add this line to the application's Gemfile:
 ``` ruby
-gem('github-calendar')
+gem 'github-calendar'
 ```
 
 And then execute:
