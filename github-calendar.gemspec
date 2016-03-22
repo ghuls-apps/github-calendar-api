@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'github-calendar'
-  s.version = '1.1.0'
+  s.version = '1.2.0'
   s.required_ruby_version = '>= 2.3.0'
   s.authors = ['Eli Foster']
   s.description = 'A library that allows for quick HTML parsing of GitHub user profile contribution calendars. ' \
@@ -15,4 +15,5 @@ Gem::Specification.new do |s|
   s.summary = 'Getting GitHub user profile calendar data through HTML parsing.'
   s.add_runtime_dependency('nokogiri', '>= 1.6.7.2')
   s.add_runtime_dependency('string-utility', '>= 2.7.1')
+  s.add_runtime_dependency('curb', '>= 0.9.1')
 end

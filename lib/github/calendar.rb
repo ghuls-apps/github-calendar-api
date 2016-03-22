@@ -1,4 +1,4 @@
-require 'open-uri'
+require 'curb'
 require 'nokogiri'
 require 'string-utility'
 require_relative 'exceptions'
@@ -42,13 +42,12 @@ module GitHub
       weeks = get_calendar(user)
       ret = {}
       count = 0
-      weeks[1..-1].each do |k|
-        data = 0
-        capture = k.to_s.scan(/data-count="(.*?)"/)
-        capture[1..-1].each do |ints|
-          data += ints[0].to_i
+      weeks.each do |k|
+        week_data = 0
+        k.children.each do |element|
+          week_data += element.attribute('data-count').value.to_i
         end
-        ret[count] = data
+        ret[count] = week_data
         count += 1
       end
       ret
@@ -61,10 +60,10 @@ module GitHub
       weeks = get_calendar(user)
       ret = {}
       count = 0
-      weeks[1..-1].each do |k|
-        capture = k.to_s.scan(/data-count="(.*?)"/)
-        capture[1..-1].each do |i|
-          ret[count] = i[0].to_i
+      weeks.each do |k|
+        k.children.each do |day|
+          val = day.attribute('data-count').value.to_i
+          ret[count] = val
           count += 1
         end
       end
@@ -91,11 +90,11 @@ module GitHub
         '11' => 0,
         '12' => 0
       }
-      weeks[1..-1].each do |k|
-        date = k.to_s.scan(/data-date=".*-(.*?)-/)
-        capture = k.to_s.scan(/data-count="(.*?)"/)
-        capture[1..-1].each do |i|
-          ret[date[0][0]] += i[0].to_i
+      weeks.each do |k|
+        k.children.each do |day|
+          date = day.attribute('data-date').value.split('-')[1]
+          count = day.attribute('data-count').value
+          ret[date] += count.to_i
         end
       end
       ret
@@ -133,7 +132,7 @@ module GitHub
     # @raise [UserNotFoundException] If the user is not found.
     def get_page_source(user)
       begin
-        Nokogiri::HTML(open("https://github.com/#{user}"), &:noblanks)
+        Nokogiri::HTML(Curl.get("https://github.com/#{user}").body_str, &:noblanks)
       rescue OpenURI::HTTPError
         raise GitHub::Exceptions::UserNotFoundException.new(user)
       end
@@ -141,11 +140,11 @@ module GitHub
 
     # Gets the parsed calendar HTML source for the user profile.
     # @param user [String] See #get_total_year
-    # @return [Nokogiri::XML::NodeSet] The NodeSet for all the g's in the calendar. Consider this as an array of all
-    # the weeks. In iteration, you will probably want to skip the first, as it is the total yearly.
+    # @return [Nokogiri::XML::NodeSet] The NodeSet for all the days in the calendar. Consider this as an array of all
+    # the weeks.
     def get_calendar(user)
       source = get_page_source(user)
-      source.css('svg.js-calendar-graph-svg g')
+      source.css('svg.js-calendar-graph-svg g g')
     end
 
     # Gets an average for all the integer values in a hash.
