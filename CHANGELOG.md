@@ -1,5 +1,9 @@
 # Changelog
 ## Version 1
+### Version 1.2.1
+* Pessimistic version requirements. Bump dependencies.
+* License as MIT.
+
 ### Version 1.2.0
 * Switch to Curb instead of OpenURI for the `#get_page_source` method, due to possible conflicted `Kernel#open` monkeypatches from Sinatra and OpenURI (#4, ghuls-web#15)
 * Improve reliability of `#get_daily`, `#get_weekly`, and `#get_monthly` by properly using Nokogiri's Element methods.
