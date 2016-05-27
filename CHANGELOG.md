@@ -1,5 +1,12 @@
 # Changelog
 ## Version 1
+### Version 1.3.0
+* Update for latest GitHub contribution graph changes (#6).
+  * The methods relating to contribution streaks have been removed, as GitHub has removed that data.
+  * get_total_year is slightly slower, as there is no longer a specific class for the yearly contributions and as a 
+  result we now have to iterate over all of the level 3 headers until we find that specific one using regex.
+* Fix leftover OpenURI rescuing, which prevented the UserNotFoundException from ever being raised.
+
 ### Version 1.2.1
 * Pessimistic version requirements. Bump dependencies.
 * License as MIT.

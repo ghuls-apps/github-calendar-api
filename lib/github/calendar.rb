@@ -13,26 +13,15 @@ module GitHub
     # @return [Integer] An integer value of their total contributions this year.
     def get_total_year(user)
       source = get_page_source(user)
-      string = source.css('span.contrib-number')[0].text
-      string.to_i_separated
-    end
-
-    # Gets the longest contribution streak (in days) that the user has had.
-    # @param user [String] See #get_total_year
-    # @return [Integer] The user's longest contribution streak in days.
-    def get_longest_streak(user)
-      source = get_page_source(user)
-      string = source.css('span.contrib-number')[1].text
-      string.to_i_separated
-    end
-
-    # Gets the current contribution streak (in days) that the user is in.
-    # @param user [String] See #get_total_year
-    # @return [Integer] The user's current contribution streak in days.
-    def get_current_streak(user)
-      source = get_page_source(user)
-      string = source.css('span.contrib-number')[2].text
-      string.to_i_separated
+      headers = source.css('h3')
+      string = nil
+      headers.each do |i|
+        if /contributions in the last year/ =~ i.text
+          string = i.text.to_i_separated
+          break
+        end
+      end
+      string || 0
     end
 
     # Gets the weekly contribution count for the past year.
@@ -131,11 +120,9 @@ module GitHub
     # @return [Nokogiri::HTML::Document] The parsed HTML for the user page
     # @raise [UserNotFoundException] If the user is not found.
     def get_page_source(user)
-      begin
-        Nokogiri::HTML(Curl.get("https://github.com/#{user}").body_str, &:noblanks)
-      rescue OpenURI::HTTPError
-        raise GitHub::Exceptions::UserNotFoundException.new(user)
-      end
+      response = Curl.get("https://github.com/#{user}").body_str
+      fail GitHub::Exceptions::UserNotFoundException.new(user) if /Not Found/ =~ response
+      Nokogiri::HTML(response, &:noblanks)
     end
 
     # Gets the parsed calendar HTML source for the user profile.

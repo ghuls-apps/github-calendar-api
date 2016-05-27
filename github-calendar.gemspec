@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'github-calendar'
-  s.version = '1.2.1'
+  s.version = '1.3.0'
   s.required_ruby_version = '>= 2.3.0'
   s.authors = ['Eli Foster']
   s.description = 'A library that allows for quick HTML parsing of GitHub user profile contribution calendars. ' \
