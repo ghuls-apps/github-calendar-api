@@ -13,11 +13,13 @@ module GitHub
     # @return [Integer] An integer value of their total contributions this year.
     def get_total_year(user)
       source = get_page_source(user)
-      headers = source.css('h3')
+      headers = source.css('h2')
       string = nil
       headers.each do |i|
-        if /contributions in the last year/ =~ i.text
-          string = i.text.to_i_separated
+        # Strip excess whitespace and newlines
+        header_text = i.text.gsub(/(\s+|\n)/, ' ')
+        if /contributions in the last year/ =~ header_text
+          string = header_text.to_i_separated
           break
         end
       end
