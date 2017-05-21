@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-ruby '2.3.0'
+ruby '2.4.1'
 
 gem('nokogiri', '~> 1.6.7')
 gem('string-utility', '~> 2.7')
