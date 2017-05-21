@@ -1,5 +1,10 @@
 # Changelog
 ## Version 1
+### Version 1.3.1
+* Update for latest GitHub contribution section changes (format of yearly count).
+* Update to StringUtility 3.0.
+* Update to Nokogiri 2.7.
+
 ### Version 1.3.0
 * Update for latest GitHub contribution graph changes (#6).
   * The methods relating to contribution streaks have been removed, as GitHub has removed that data.
