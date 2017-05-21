@@ -15,6 +15,6 @@ Gem::Specification.new do |s|
   s.summary = 'Getting GitHub user profile calendar data through HTML parsing.'
   s.license = 'MIT'
   s.add_runtime_dependency('nokogiri', '~> 1.7')
-  s.add_runtime_dependency('string-utility', '~> 2.7')
+  s.add_runtime_dependency('string-utility', '~> 3.0')
   s.add_runtime_dependency('curb', '~> 0.9')
 end
